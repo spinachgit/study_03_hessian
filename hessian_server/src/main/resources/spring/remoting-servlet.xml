@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- 方式1：使用spring:annotation方式注入/userServiceAnno远程调用的名称 -->
+    <!-- http:// -->
+	<bean name="/userServiceAnno" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="userServiceRemote" />
+		<property name="serviceInterface" value="com.spinach.spring.service.UserService" />
+	</bean>
 
-       <bean id="userService" class="server.UserServiceImpl"/>
-
-       <bean name="/remoting" class="org.springframework.remoting.caucho.HessianServiceExporter">
-              <property name="service" ref="userService"/>
-              <property name="serviceInterface" value="server.UserService"/>
-       </bean>
+	<!--  方式2：使用spring:xml方式注入 -->
+	<bean id="userServiceXml" class="com.spinach.spring.service.impl.UserServiceImpl" />
+	<bean name="/userServiceXml" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="userServiceXml" />
+		<property name="serviceInterface" value="com.spinach.spring.service.UserService" />
+	</bean>
+	
 </beans>

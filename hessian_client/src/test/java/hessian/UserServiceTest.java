@@ -19,10 +19,12 @@ import com.spinach.spring.service.UserService;
 @ContextConfiguration(locations = { "classpath:applicationContext-client-test.xml" })
 public class UserServiceTest extends TestCase {
 	private static final Logger logger=LoggerFactory.getLogger(UserServiceTest.class);
+	/** 拿到客户端的beanName **/
 	@Autowired
 	@Qualifier("clientUserService")
 	private UserService clientUserService;
 	
+	/** 拿到服务端的beanName **/
 	@Autowired
 	@Qualifier("userServiceRemote")
 	private UserService userServiceRemote;

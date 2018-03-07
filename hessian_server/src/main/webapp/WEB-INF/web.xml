@@ -1,20 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" 
-xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+	<!-- 加载上下文环境：比如配置annotation包扫描 -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:applicationContext-hessian-server-beans.xml</param-value>
+		<param-value>classpath*:spring/spring-context.xml</param-value>
 	</context-param>
+	
+	<!--  上下文路径加载：必须有，否则不要注入 -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	<!-- 使用了：spring-webmvc的DispatcherServlet加分发请求 -->
 	<servlet>
 		<servlet-name>remoting</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<init-param>
+			<!-- hessianConfigLocation -->
+			<param-name>contextConfigLocation</param-name>
+			<!-- 没有这个配置，默认放在web-inf文件夹下 -->
+			<param-value>classpath*:spring/remoting-servlet.xml</param-value>
+		</init-param>
+		<!-- 数字代表加载的优先级 -->
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>remoting</servlet-name>
 		<url-pattern>/remoting/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>hessianServlet</servlet-name>                                                               
+		<!-- servlet-class中指定的类是固定的，统一使用 com.caucho.hessian.server.HessianServlet-->
+		<servlet-class>com.caucho.hessian.server.HessianServlet</servlet-class>
+		<init-param>                                                                                            
+			<!-- 服务接口，使用全路径 home-api or api-class：具体请看HessianServlet263行 -->
+			<param-name>home-api</param-name>
+			<param-value>com.spinach.servlet.service.ServletService</param-value>
+		</init-param>
+		<init-param>                                                                                            
+			<!-- 服务实现类，使用全路径home-class or service-class -->
+			<param-name>home-class</param-name>
+			<param-value>com.spinach.servlet.service.ServletServiceImpl</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>hessianServlet</servlet-name>
+		<url-pattern>/servlet</url-pattern>
 	</servlet-mapping>
 </web-app>
